@@ -1,0 +1,27 @@
+<div class="container mt-4">
+    <h2>Nueva Cita</h2>
+
+    <form action="/create" method="POST" class="card p-4 shadow">
+
+        <div class="mb-3">
+            <label>Mascota</label>
+            <select name="mascota_id" class="form-control">
+                <% mascotas.forEach(m => { %>
+                    <option value="<%= m.id %>"><%= m.nombreMasc%></option>
+                <% }) %>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label>Servicio</label>
+            <input type="text" name="servicio" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Fecha</label>
+            <input type="date" name="fecha" class="form-control" required>
+        </div>
+
+        <button class="btn btn-primary">Guardar</button>
+    </form>
+</div>

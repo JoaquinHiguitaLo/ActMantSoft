@@ -3,56 +3,37 @@ const db = new sqlite3.Database(':memory:');
 
 db.serialize(() => {
 
-    // 1. Tabla original
-    db.run(`CREATE TABLE appointments (
+    // 1. Tabla dueños
+    db.run(`CREATE TABLE duenos (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        pet_name TEXT NOT NULL,
-        CedId TEXT NOT NULL,
-        service TEXT NOT NULL,
-        appointment_date TEXT NOT NULL,
-        status TEXT DEFAULT 'Scheduled',
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        cedula INTEGER NOT NULL UNIQUE,
+        nombre TEXT NOT NULL,
+        celular TEXT NOT NULL,
+        direccion TEXT NOT NULL,
+        correo TEXT,
+        creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
-    // 2. Nueva tabla Owners
-    db.run(`CREATE TABLE owners (
+    // 2. Tabla mascotas
+    db.run(`CREATE TABLE mascotas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        CedId TEXT,
-        name TEXT,
-        phone TEXT,
-        email TEXT
+        nombreMasc TEXT NOT NULL,
+        raza TEXT,
+        dueno_id INTEGER NOT NULL,
+        creado_en DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (dueno_id) REFERENCES duenos(id)
     )`);
 
-    // 3. Nueva tabla Pets
-    db.run(`CREATE TABLE pets (
+    // 3. Tabla citas 
+    db.run(`CREATE TABLE citas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        species TEXT,
-        owner_id INTEGER NOT NULL,
-        FOREIGN KEY (owner_id) REFERENCES owners(id)
+        mascota_id INTEGER NOT NULL,
+        servicio TEXT NOT NULL,
+        fecha TEXT NOT NULL,
+        estado TEXT DEFAULT 'Programada',
+        creado_en DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (mascota_id) REFERENCES mascotas(id)
     )`);
-
-    // 4. Datos de prueba (simulando tu sistema viejo)
-    db.run(`INSERT INTO appointments (pet_name, owner_name, service, appointment_date)
-            VALUES 
-            ('Rex', 'Juan', 'Baño', '2025-03-20'),
-            ('Luna', 'Ana', 'Consulta', '2025-03-21')`);
-
-    // 5. MIGRACIÓN
-
-    // Insertar dueños únicos
-    db.run(`
-        INSERT INTO owners (name)
-        SELECT DISTINCT owner_name FROM appointments
-    `);
-
-    // Insertar mascotas asociadas al dueño
-    db.run(`
-        INSERT INTO pets (name, owner_id)
-        SELECT DISTINCT a.pet_name, o.id
-        FROM appointments a
-        JOIN owners o ON a.owner_name = o.name
-    `);
 
 });
 

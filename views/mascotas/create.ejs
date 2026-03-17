@@ -1,0 +1,29 @@
+<div class="container mt-4">
+    <h2>Crear Mascota</h2>
+
+    <form action="/mascotas/create" method="POST" class="card p-4 shadow">
+
+        <div class="mb-3">
+            <label>Nombre de la mascota</label>
+            <input type="text" name="nombre" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Raza</label>
+            <input type="text" name="raza" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label>Dueño</label>
+            <select name="dueno_id" class="form-control" required>
+                <% duenos.forEach(d => { %>
+                    <option value="<%= d.id %>">
+                        <%= d.nombre %> (C.C: <%= d.cedula %>)
+                    </option>
+                <% }) %>
+            </select>
+        </div>
+
+        <button class="btn btn-primary">Guardar</button>
+    </form>
+</div>

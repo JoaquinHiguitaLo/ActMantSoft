@@ -1,0 +1,9 @@
+<h1>Dueños</h1>
+
+<a href="/duenos/create">Crear dueño</a>
+
+<ul>
+    <% duenos.forEach(d => { %>
+        <li><%= d.nombre %> - <%= d.cedula %></li>
+    <% }) %>
+</ul>

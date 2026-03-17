@@ -1,0 +1,36 @@
+<div class="container mt-4">
+    <h2 class="mb-4">Crear Dueño</h2>
+
+    <form action="/duenos/create" method="POST" class="card p-4 shadow">
+
+        <div class="mb-3">
+            <label class="form-label">Cédula</label>
+            <input type="text" name="cedula" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" name="nombre" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Celular</label>
+            <input type="text" name="celular" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Dirección</label>
+            <input type="text" name="direccion" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Correo</label>
+            <input type="email" name="correo" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Guardar
+        </button>
+
+    </form>
+</div>
