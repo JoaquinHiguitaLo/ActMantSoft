@@ -1,29 +1,92 @@
-const db = require('../config/db');
+const Dueno = require('../models/duenoModel');
 
-exports.todosDuenos = (req, res) => {
-    db.all("SELECT * FROM duenos ORDER BY creado_en DESC", [], (err, rows) => {
-        if (err) return res.send(err.message);
+exports.todosDuenos = async (req, res) => {
+    try {
+        const duenos = await Dueno.obtenerTodos();
 
         res.render('duenos/index', {
             title: 'Lista de Dueños',
-            duenos: rows
+            duenos: duenos
         });
+    } catch (error) {
+        res.send(error.message);
+    }
+};
+
+exports.formCrearDueno = (req, res) => {
+    res.render('duenos/create', {
+        title: 'Crear Dueño'
     });
 };
 
 // 🔹 Crear dueño
-exports.crearDueno = (req, res) => {
-    const { cedula, nombre, celular, direccion, correo } = req.body;
+exports.crearDueno = async (req, res) => {
+    try {
+        const { cedula, nombre, celular, direccion, correo } = req.body;
 
-    db.run(
-        `INSERT INTO duenos (cedula, nombre, celular, direccion, correo)
-         VALUES (?, ?, ?, ?, ?)`,
-        [cedula, nombre, celular, direccion, correo],
-        function (err) {
-            if (err) return res.send(err.message);
+        await Dueno.crear({ cedula, nombre, celular, direccion, correo });
 
-            //Redirige al panel principal (citas)
-            res.redirect('/');
+        res.redirect('/duenos');
+    } catch (error) {
+
+        if (error.message.includes('UNIQUE constraint failed: duenos.cedula')) {
+            return res.render('duenos/create', {
+                title: 'Crear Dueño',
+                error: 'Ya existe un dueño registrado con esa cédula.'
+            });
         }
-    );
+
+        res.send(error.message);
+    }
+};
+
+exports.formEditarDueno = async (req, res) => {
+    try {
+        const dueno = await Dueno.obtenerPorId(req.params.id);
+
+        res.render('duenos/edit', {
+            title: 'Editar Dueño',
+            dueno,
+            error: null
+        });
+    } catch (error) {
+        res.send(error.message);
+    }
+};
+
+exports.editarDueno = async (req, res) => {
+    try {
+        const { cedula, nombre, celular, direccion, correo } = req.body;
+
+        await Dueno.actualizar(req.params.id, {
+            cedula,
+            nombre,
+            celular,
+            direccion,
+            correo
+        });
+
+        res.redirect('/duenos');
+    } catch (error) {
+        const dueno = await Dueno.obtenerPorId(req.params.id);
+
+        if (error.message.includes('UNIQUE constraint failed: duenos.cedula')) {
+            return res.render('duenos/edit', {
+                title: 'Editar Dueño',
+                dueno,
+                error: 'Ya existe un dueño registrado con esa cédula.'
+            });
+        }
+
+        res.send(error.message);
+    }
+};
+
+exports.eliminarDueno = async (req, res) => {
+    try {
+        await Dueno.eliminar(req.params.id);
+        res.redirect('/duenos');
+    } catch (error) {
+        res.send(error.message);
+    }
 };

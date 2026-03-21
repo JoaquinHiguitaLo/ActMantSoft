@@ -1,28 +1,89 @@
-const db = require('../config/db');
+const Mascota = require('../models/mascotaModel');
 
-// 🔹 Mostrar formulario
-exports.getCreateForm = (req, res) => {
-    db.all("SELECT * FROM duenos", [], (err, duenos) => {
-        if (err) return res.send(err.message);
+exports.todasMascotas = async (req, res) => {
+    try {
+        const mascotas = await Mascota.obtenerTodas();
 
-        res.render('mascotas/create', { 
-            title: 'Crear mascota',
-            duenos: duenos });
-    });
+        res.render('mascotas/index', {
+            title: 'Lista de Mascotas',
+            mascotas
+        });
+    } catch (error) {
+        res.send(error.message);
+    }
 };
 
-// 🔹 Crear mascota
-exports.createMascota = (req, res) => {
-    const { nombre, raza, dueno_id } = req.body;
+exports.getCreateForm = async (req, res) => {
+    try {
+        const duenos = await Mascota.obtenerDuenos();
 
-    db.run(
-        `INSERT INTO mascotas (nombreMasc, raza, dueno_id)
-         VALUES (?, ?, ?)`,
-        [nombre, raza, dueno_id],
-        function (err) {
-            if (err) return res.send(err.message);
+        res.render('mascotas/create', {
+            title: 'Crear mascota',
+            duenos
+        });
+    } catch (error) {
+        res.send(error.message);
+    }
+};
 
-            res.redirect('/mascotas/create');
-        }
-    );
+exports.createMascota = async (req, res) => {
+    try {
+        const { nombreMasc, raza, color, sexo, edad, dueno_id } = req.body;
+
+        await Mascota.crear({
+            nombreMasc,
+            raza,
+            color,
+            sexo,
+            edad,
+            dueno_id
+        });
+
+        res.redirect('/mascotas');
+    } catch (error) {
+        res.send(error.message);
+    }
+};
+
+exports.getEditForm = async (req, res) => {
+    try {
+        const mascota = await Mascota.obtenerPorId(req.params.id);
+        const duenos = await Mascota.obtenerDuenos();
+
+        res.render('mascotas/edit', {
+            title: 'Editar mascota',
+            mascota,
+            duenos
+        });
+    } catch (error) {
+        res.send(error.message);
+    }
+};
+
+exports.editMascota = async (req, res) => {
+    try {
+        const { nombreMasc, raza, color, sexo, edad, dueno_id } = req.body;
+
+        await Mascota.actualizar(req.params.id, {
+            nombreMasc,
+            raza,
+            color,
+            sexo,
+            edad,
+            dueno_id
+        });
+
+        res.redirect('/mascotas');
+    } catch (error) {
+        res.send(error.message);
+    }
+};
+
+exports.deleteMascota = async (req, res) => {
+    try {
+        await Mascota.eliminar(req.params.id);
+        res.redirect('/mascotas');
+    } catch (error) {
+        res.send(error.message);
+    }
 };

@@ -1,0 +1,50 @@
+<div class="container mt-4">
+    <h2>Editar Mascota</h2>
+
+    <form action="/mascotas/edit/<%= mascota.id %>" method="POST" class="card p-4 shadow">
+
+        <div class="mb-3">
+            <label>Nombre de la mascota</label>
+            <input type="text" name="nombreMasc" class="form-control" value="<%= mascota.nombreMasc %>" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Raza</label>
+            <input type="text" name="raza" class="form-control" value="<%= mascota.raza %>" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Color</label>
+            <input type="text" name="color" class="form-control" value="<%= mascota.color %>" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Sexo</label>
+            <select name="sexo" class="form-control" required>
+                <option value="Macho" <%= mascota.sexo === 'Macho' ? 'selected' : '' %>>Macho</option>
+                <option value="Hembra" <%= mascota.sexo === 'Hembra' ? 'selected' : '' %>>Hembra</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label>Edad</label>
+            <input type="number" name="edad" class="form-control" value="<%= mascota.edad %>" min="0" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Dueño</label>
+            <select name="dueno_id" class="form-control" required>
+                <% duenos.forEach(d => { %>
+                    <option value="<%= d.id %>" <%= mascota.dueno_id == d.id ? 'selected' : '' %>>
+                        <%= d.nombre %> (C.C: <%= d.cedula %>)
+                    </option>
+                <% }) %>
+            </select>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary">Guardar cambios</button>
+            <a href="/mascotas" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>

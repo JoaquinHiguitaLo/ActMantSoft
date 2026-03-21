@@ -1,60 +1,69 @@
-const db = require('../config/db');
+const Cita = require('../models/citasModel');
+const { validarDatosCita } = require('../utils/validators');
 
 // 🔹 Listar citas
-exports.getAllcitas = (req, res) => {
-    db.all(`
-        SELECT c.id, c.servicio, c.fecha, c.estado,
-               m.nombreMasc AS mascota_nombre,
-               d.nombre AS dueno_nombre
-        FROM citas c
-        JOIN mascotas m ON c.mascota_id = m.id
-        JOIN duenos d ON m.dueno_id = d.id
-        ORDER BY c.fecha DESC
-    `, [], (err, rows) => {
-        if (err) return res.status(500).send(err.message);
+exports.getAllcitas = async (req, res) => {
+    try {
+        const citas = await Cita.obtenerTodas();
 
         res.render('citas/index', {
             title: 'Panel de citas',
-            citas: rows
+            citas: citas
         });
-    }); // ✅ ESTE PARÉNTESIS FALTABA
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
 };
 
 // 🔹 Formulario crear cita
-exports.getCreateForm = (req, res) => {
-    db.all("SELECT * FROM mascotas", [], (err, mascotas) => {
-        if (err) return res.send(err.message);
+exports.getCreateForm = async (req, res) => {
+    try {
+        const mascotas = await Cita.obtenerMascotas();
 
-        res.render('citas/create', { 
+        res.render('citas/create', {
             title: 'Crear cita',
-            mascotas : mascotas
+            mascotas: mascotas,
+            errores: [],
+            oldData: {}
         });
-    });
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
 };
 
 // 🔹 Crear cita
-exports.createcitas = (req, res) => {
-    const { mascota_id, servicio, fecha } = req.body;
+exports.createcitas = async (req, res) => {
+    try {
+        const { mascota_id, servicio, fecha, peso, temperatura, diagnostico } = req.body;
 
-    db.run(
-        `INSERT INTO citas (mascota_id, servicio, fecha)
-         VALUES (?, ?, ?)`,
-        [mascota_id, servicio, fecha],
-        function (err) {
-            if (err) return res.status(500).send(err.message);
+        const data = { mascota_id, servicio, fecha, peso, temperatura, diagnostico };
+        const errores = validarDatosCita(data);
 
-            res.redirect('/');
+        if (errores.length > 0) {
+            const mascotas = await Cita.obtenerMascotas();
+
+            return res.render('citas/create', {
+                title: 'Crear cita',
+                mascotas: mascotas,
+                errores: errores,
+                oldData: data
+            });
         }
-    );
+
+        await Cita.crear(data);
+        res.redirect('/');
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
 };
 
 // 🔹 Eliminar cita
-exports.deletecitas = (req, res) => {
-    const id = req.params.id;
-
-    db.run("DELETE FROM citas WHERE id = ?", [id], function (err) {
-        if (err) return res.status(500).send(err.message);
-
+exports.deletecitas = async (req, res) => {
+    try {
+        const id = req.params.id;
+        await Cita.eliminar(id);
         res.redirect('/');
-    });
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
 };

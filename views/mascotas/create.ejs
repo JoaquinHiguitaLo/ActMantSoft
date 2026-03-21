@@ -5,17 +5,37 @@
 
         <div class="mb-3">
             <label>Nombre de la mascota</label>
-            <input type="text" name="nombre" class="form-control" required>
+            <input type="text" name="nombreMasc" class="form-control" required>
         </div>
 
         <div class="mb-3">
             <label>Raza</label>
-            <input type="text" name="raza" class="form-control">
+            <input type="text" name="raza" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Color</label>
+            <input type="text" name="color" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Sexo</label>
+            <select name="sexo" class="form-control" required>
+                <option value="">Seleccione</option>
+                <option value="Macho">Macho</option>
+                <option value="Hembra">Hembra</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label>Edad</label>
+            <input type="number" name="edad" class="form-control" min="0" required>
         </div>
 
         <div class="mb-3">
             <label>Dueño</label>
             <select name="dueno_id" class="form-control" required>
+                <option value="">Seleccione un dueño</option>
                 <% duenos.forEach(d => { %>
                     <option value="<%= d.id %>">
                         <%= d.nombre %> (C.C: <%= d.cedula %>)

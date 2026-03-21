@@ -1,8 +1,8 @@
-
 const express = require('express');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const morgan = require('morgan');
+
 const citasRoutes = require('./routes/citasRoutes');
 const duenoRoutes = require('./routes/duenoRoutes');
 const mascotaRoutes = require('./routes/mascotaRoutes');
@@ -21,10 +21,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
+// Ruta principal
+app.get('/', (req, res) => {
+    res.redirect('/citas');
+});
+
 // Routes
-app.use('/', citasRoutes);
+app.use('/citas', citasRoutes);
 app.use('/duenos', duenoRoutes);
 app.use('/mascotas', mascotaRoutes);
 
 module.exports = app;
-

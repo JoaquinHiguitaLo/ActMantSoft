@@ -1,5 +1,6 @@
 <div class="container mt-4">
     <h2 class="mb-4">Crear Dueño</h2>
+    <% if (typeof error !== 'undefined') { %> <div class="alert alert-danger"><%= error %></div><% } %>
 
     <form action="/duenos/create" method="POST" class="card p-4 shadow">
 
