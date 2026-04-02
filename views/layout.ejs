@@ -64,6 +64,11 @@
             text-align: center;
             color: #636e72;
         }
+
+        .user-badge {
+            font-size: 0.9rem;
+            color: #555;
+        }
     </style>
 </head>
 
@@ -76,36 +81,55 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="nav nav-pills nav-justified">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/citas">Citas</a>
-                    </li>
+            <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="/citas/create">Agendar cita</a>
-                    </li>
+                <% if (user) { %>
+                    <ul class="nav nav-pills nav-justified">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/citas">Citas</a>
+                        </li>
 
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            Dueños
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/duenos">Ver Dueños</a></li>
-                            <li><a class="dropdown-item" href="/duenos/create">Crear Dueño</a></li>
-                        </ul>
-                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/citas/create">Agendar cita</a>
+                        </li>
 
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            Mascotas
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/mascotas">Ver Mascotas</a></li>
-                            <li><a class="dropdown-item" href="/mascotas/create">Crear Mascota</a></li>
-                        </ul>
-                    </li>
-                </ul>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                Dueños
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/duenos">Ver Dueños</a></li>
+                                <li><a class="dropdown-item" href="/duenos/create">Crear Dueño</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                Mascotas
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/mascotas">Ver Mascotas</a></li>
+                                <li><a class="dropdown-item" href="/mascotas/create">Crear Mascota</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="user-badge">
+                            <strong><%= user.nombre %></strong><br>
+                            <small>Rol: <%= user.rol %></small>
+                        </div>
+
+                        <a href="/auth/logout" class="btn btn-outline-danger btn-sm">Cerrar sesión</a>
+                    </div>
+                <% } else { %>
+                    <% if (mostrarBotonLogin !== false) { %>
+                        <div class="ms-auto">
+                            <a href="/auth/login" class="btn btn-primary btn-sm">Iniciar sesión</a>
+                        </div>
+                    <% } %>
+                <% } %>
+
             </div>
         </div>
     </nav>

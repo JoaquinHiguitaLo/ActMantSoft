@@ -47,10 +47,18 @@
                             </p>
                         <% } %>
 
-                        <form action="/citas/delete/<%= app.id %>" method="POST"
-                              onsubmit="return confirm('¿Eliminar esta cita?')">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
-                        </form>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <% if (user && user.rol === 'Veterinario') { %>
+                                <a href="/citas/edit-medical/<%= app.id %>" class="btn btn-sm btn-outline-primary">
+                                    Editar evolución médica
+                                </a>
+                            <% } %>
+
+                            <form action="/citas/delete/<%= app.id %>" method="POST"
+                                  onsubmit="return confirm('¿Eliminar esta cita?')">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -2,10 +2,12 @@ const express = require('express');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const morgan = require('morgan');
+const session = require('express-session');
 
 const citasRoutes = require('./routes/citasRoutes');
 const duenoRoutes = require('./routes/duenoRoutes');
 const mascotaRoutes = require('./routes/mascotaRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 
@@ -19,14 +21,32 @@ app.set('layout', 'layout');
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+//  Middleware de sesión
+app.use(session({
+    secret: 'clinica-veterinaria-segura',
+    resave: false,
+    saveUninitialized: false
+}));
+
+app.use((req, res, next) => {
+    res.locals.user = req.session.user || null;
+    next();
+});
+
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // Ruta principal
 app.get('/', (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/auth/login');
+    }
+
     res.redirect('/citas');
 });
 
 // Routes
+app.use('/auth', authRoutes);
 app.use('/citas', citasRoutes);
 app.use('/duenos', duenoRoutes);
 app.use('/mascotas', mascotaRoutes);

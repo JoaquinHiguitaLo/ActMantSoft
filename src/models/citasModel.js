@@ -37,6 +37,25 @@ const Cita = {
         });
     },
 
+    obtenerPorId: (id) => {
+        return new Promise((resolve, reject) => {
+            db.get(
+                `SELECT c.*, 
+                        m.nombreMasc AS mascota_nombre,
+                        d.nombre AS dueno_nombre
+                 FROM citas c
+                 JOIN mascotas m ON c.mascota_id = m.id
+                 JOIN duenos d ON m.dueno_id = d.id
+                 WHERE c.id = ?`,
+                [id],
+                (err, row) => {
+                    if (err) reject(err);
+                    else resolve(row);
+                }
+            );
+        });
+    },
+
     crear: ({ mascota_id, servicio, fecha, peso, temperatura, diagnostico }) => {
         return new Promise((resolve, reject) => {
             db.run(
@@ -46,6 +65,21 @@ const Cita = {
                 function (err) {
                     if (err) reject(err);
                     else resolve({ id: this.lastID });
+                }
+            );
+        });
+    },
+
+    actualizarCamposMedicos: (id, { peso, temperatura, diagnostico }) => {
+        return new Promise((resolve, reject) => {
+            db.run(
+                `UPDATE citas
+                 SET peso = ?, temperatura = ?, diagnostico = ?
+                 WHERE id = ?`,
+                [peso || null, temperatura || null, diagnostico || null, id],
+                function (err) {
+                    if (err) reject(err);
+                    else resolve({ changes: this.changes });
                 }
             );
         });

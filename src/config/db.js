@@ -1,10 +1,11 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
-const dbPath = path.join(__dirname, '../../database.sqlite'); //Guarda la base en un archivo real
+const dbPath = path.join(__dirname, '../../database.sqlite'); // Guarda la base en un archivo real
 const db = new sqlite3.Database(dbPath);
-db.serialize(() => { //instruccion SQL - Esto hace que se ejecuten en orden
-    db.run("PRAGMA foreign_keys = ON"); //Esto activa foreign keys.
+
+db.serialize(() => { // instrucción SQL - Esto hace que se ejecuten en orden
+    db.run("PRAGMA foreign_keys = ON"); // Esto activa foreign keys.
 
     // 1. Tabla dueños
     db.run(`CREATE TABLE IF NOT EXISTS duenos (
@@ -42,6 +43,16 @@ db.serialize(() => { //instruccion SQL - Esto hace que se ejecuten en orden
         diagnostico TEXT,
         creado_en DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (mascota_id) REFERENCES mascotas(id) ON DELETE CASCADE
+    )`);
+
+    // 4. Tabla usuarios
+    db.run(`CREATE TABLE IF NOT EXISTS usuarios (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT NOT NULL,
+        correo TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        rol TEXT NOT NULL CHECK (rol IN ('Administrador', 'Veterinario')),
+        creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 });
 
