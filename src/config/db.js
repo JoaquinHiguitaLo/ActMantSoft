@@ -41,9 +41,17 @@ db.serialize(() => { // instrucción SQL - Esto hace que se ejecuten en orden
         peso REAL,
         temperatura REAL,
         diagnostico TEXT,
+        medicina_recetada TEXT,
         creado_en DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (mascota_id) REFERENCES mascotas(id) ON DELETE CASCADE
     )`);
+
+    // Migración simple para bases ya creadas
+    db.run(`ALTER TABLE citas ADD COLUMN medicina_recetada TEXT`, (err) => {
+        if (err && !err.message.includes('duplicate column name')) {
+            console.error('Error agregando columna medicina_recetada:', err.message);
+        }
+    });
 
     // 4. Tabla usuarios
     db.run(`CREATE TABLE IF NOT EXISTS usuarios (

@@ -39,6 +39,10 @@ function validarDatosCita(data) {
         if (!data.diagnostico || data.diagnostico.trim() === '') {
             errores.push('El diagnóstico es obligatorio en consultas médicas.');
         }
+
+        if (!data.medicina_recetada || data.medicina_recetada.trim() === '') {
+            errores.push('La medicina recetada es obligatoria en consultas médicas.');
+        }
     }
 
     return errores;

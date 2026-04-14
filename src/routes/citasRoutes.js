@@ -13,6 +13,14 @@ router.post('/create', authMiddleware, citasController.createcitas);
 router.get('/edit-medical/:id', authMiddleware, roleVeterinario, citasController.getEditMedicalForm);
 router.post('/edit-medical/:id', authMiddleware, roleVeterinario, citasController.updateMedicalData);
 
+//Ruta para ver historial clínico de una mascota
+router.get(
+    '/historial/:mascotaId',
+    authMiddleware,
+    roleVeterinario,
+    citasController.verHistorialClinico
+);
+
 router.post('/delete/:id', authMiddleware, citasController.deletecitas);
 
 module.exports = router;

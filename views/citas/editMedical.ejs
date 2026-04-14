@@ -35,6 +35,11 @@
                 <textarea name="diagnostico" class="form-control" rows="4" required><%= cita.diagnostico || '' %></textarea>
             </div>
 
+            <div class="mb-3">
+                <label>Medicina recetada</label>
+                <textarea name="medicina_recetada" class="form-control" rows="3" required><%= cita.medicina_recetada || '' %></textarea>
+            </div>
+
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary">Guardar evolución médica</button>
                 <a href="/citas" class="btn btn-secondary">Cancelar</a>

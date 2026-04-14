@@ -34,9 +34,9 @@ exports.getCreateForm = async (req, res) => {
 // 🔹 Crear cita
 exports.createcitas = async (req, res) => {
     try {
-        const { mascota_id, servicio, fecha, peso, temperatura, diagnostico } = req.body;
+        const { mascota_id, servicio, fecha, peso, temperatura, diagnostico, medicina_recetada } = req.body;
 
-        const data = { mascota_id, servicio, fecha, peso, temperatura, diagnostico };
+        const data = { mascota_id, servicio, fecha, peso, temperatura, diagnostico, medicina_recetada };
         const errores = validarDatosCita(data);
 
         if (errores.length > 0) {
@@ -79,7 +79,7 @@ exports.getEditMedicalForm = async (req, res) => {
 // 🔹 Guardar edición de datos médicos
 exports.updateMedicalData = async (req, res) => {
     try {
-        const { peso, temperatura, diagnostico } = req.body;
+        const { peso, temperatura, diagnostico, medicina_recetada } = req.body;
         const id = req.params.id;
 
         const errores = [];
@@ -100,6 +100,10 @@ exports.updateMedicalData = async (req, res) => {
             errores.push('El diagnóstico es obligatorio.');
         }
 
+        if (!medicina_recetada || medicina_recetada.trim() === '') {
+            errores.push('La medicina recetada es obligatoria.');
+        }
+
         if (errores.length > 0) {
             const cita = await Cita.obtenerPorId(id);
 
@@ -109,13 +113,19 @@ exports.updateMedicalData = async (req, res) => {
                     ...cita,
                     peso,
                     temperatura,
-                    diagnostico
+                    diagnostico,
+                    medicina_recetada
                 },
                 errores: errores
             });
         }
 
-        await Cita.actualizarCamposMedicos(id, { peso, temperatura, diagnostico });
+        await Cita.actualizarCamposMedicos(id, {
+            peso,
+            temperatura,
+            diagnostico,
+            medicina_recetada
+        });
         res.redirect('/citas');
     } catch (error) {
         res.status(500).send(error.message);
@@ -128,6 +138,32 @@ exports.deletecitas = async (req, res) => {
         const id = req.params.id;
         await Cita.eliminar(id);
         res.redirect('/citas');
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+};
+
+// 🔹 Historial clínico por mascota (Timeline)
+exports.verHistorialClinico = async (req, res) => {
+    try {
+        const mascotaId = req.params.mascotaId;
+
+        const historial = await Cita.obtenerHistorialPorMascota(mascotaId);
+
+        if (!historial || historial.length === 0) {
+            return res.render('citas/historial', {
+                title: 'Historial Clínico',
+                historial: [],
+                mascota: null
+            });
+        }
+
+        res.render('citas/historial', {
+            title: 'Historial Clínico',
+            historial: historial,
+            mascota: historial[0]
+        });
+
     } catch (error) {
         res.status(500).send(error.message);
     }
