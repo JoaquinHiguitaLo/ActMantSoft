@@ -63,5 +63,30 @@ db.serialize(() => { // instrucción SQL - Esto hace que se ejecuten en orden
         creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 });
+const bcrypt = require('bcryptjs');
+
+db.get("SELECT * FROM usuarios WHERE correo = ?", ["admin@vetcare.com"], async (err, row) => {
+    if (err) {
+        console.error("Error verificando usuario admin:", err.message);
+        return;
+    }
+
+    if (!row) {
+        const passwordHash = await bcrypt.hash("123456", 10);
+
+        db.run(
+            `INSERT INTO usuarios (nombre, correo, password, rol)
+             VALUES (?, ?, ?, ?)`,
+            ["Admin Principal", "admin@vetcare.com", passwordHash, "Veterinario"],
+            (err) => {
+                if (err) {
+                    console.error("Error creando admin:", err.message);
+                } else {
+                    console.log("Usuario admin creado automáticamente");
+                }
+            }
+        );
+    }
+});
 
 module.exports = db;
