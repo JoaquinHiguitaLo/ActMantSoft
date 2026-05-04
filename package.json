@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "echo \"No hay pruebas automatizadas configuradas\" && exit 0"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "Aplicación MVC para Centro Médico Veterinario con autenticación, roles, historial clínico y despliegue CI/CD.",
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "ejs": "^4.0.1",
