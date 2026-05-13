@@ -5,45 +5,97 @@
     </div>
 
     <div class="card p-4 shadow">
-        <% if (mascotas.length === 0) { %>
+        <div class="mb-3">
+            <label>Buscar mascota</label>
+            <input type="text" id="buscarMascota" class="form-control"
+                placeholder="Buscar por mascota, dueño o cédula...">
+        </div>
+        <% if (mascotas.length===0) { %>
             <p>No hay mascotas registradas.</p>
-        <% } else { %>
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Raza</th>
-                            <th>Color</th>
-                            <th>Sexo</th>
-                            <th>Edad</th>
-                            <th>Dueño</th>
-                            <th>Cédula</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% mascotas.forEach(m => { %>
-                            <tr>
-                                <td><%= m.nombreMasc %></td>
-                                <td><%= m.raza %></td>
-                                <td><%= m.color %></td>
-                                <td><%= m.sexo %></td>
-                                <td><%= m.edad %></td>
-                                <td><%= m.nombreDueno %></td>
-                                <td><%= m.cedula %></td>
-                                <td class="d-flex gap-2">
-                                    <a href="/mascotas/edit/<%= m.id %>" class="btn btn-sm btn-outline-primary">Editar</a>
-
-                                    <form action="/mascotas/delete/<%= m.id %>" method="POST" onsubmit="return confirm('¿Eliminar esta mascota?');">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
-                                    </form>
-                                </td>
+            <% } else { %>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr class="fila-mascota">
+                                <th>Nombre</th>
+                                <th>Raza</th>
+                                <th>Color</th>
+                                <th>Sexo</th>
+                                <th>Edad</th>
+                                <th>Dueño</th>
+                                <th>Cédula</th>
+                                <th>Acciones</th>
                             </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
-            </div>
-        <% } %>
+                        </thead>
+                        <tbody>
+                            <% mascotas.forEach(m=> { %>
+                                <tr class="fila-mascota">
+                                    <td>
+                                        <%= m.nombreMasc %>
+                                    </td>
+                                    <td>
+                                        <%= m.raza %>
+                                    </td>
+                                    <td>
+                                        <%= m.color %>
+                                    </td>
+                                    <td>
+                                        <%= m.sexo %>
+                                    </td>
+                                    <td>
+                                        <%= m.edad %>
+                                    </td>
+                                    <td>
+                                        <%= m.nombreDueno %>
+                                    </td>
+                                    <td>
+                                        <%= m.cedula %>
+                                    </td>
+                                    <td class="d-flex gap-2">
+                                        <a href="/mascotas/edit/<%= m.id %>" class="btn btn-sm btn-outline-primary">
+                                            Editar
+                                        </a>
+
+                                        <% if (user && user.rol==='Veterinario' ) { %>
+                                            <a href="/citas/historial/<%= m.id %>"
+                                                class="btn btn-sm btn-outline-secondary">
+                                                Historial
+                                            </a>
+                                            <% } %>
+
+                                                <form action="/mascotas/delete/<%= m.id %>" method="POST"
+                                                    onsubmit="return confirm('¿Eliminar esta mascota?');">
+                                                    <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger">Eliminar</button>
+                                                </form>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+                <% } %>
     </div>
 </div>
+<script>
+    const buscarMascota = document.getElementById('buscarMascota');
+    const filasMascota = document.querySelectorAll('.fila-mascota');
+
+    buscarMascota.addEventListener('input', function () {
+
+        const texto = this.value.toLowerCase();
+
+        filasMascota.forEach(fila => {
+
+            const contenido = fila.innerText.toLowerCase();
+
+            if (contenido.includes(texto)) {
+                fila.style.display = '';
+            } else {
+                fila.style.display = 'none';
+            }
+
+        });
+
+    });
+</script>
